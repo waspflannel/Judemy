@@ -18,7 +18,7 @@ const useAuthStore = create((set,get) => ({
     setLoading: (loading) => set({loading}),
     
     //for updating logged in state
-    setLoggedIn: ()=>get.userData !==null
+    isLoggedIn: ()=>get().userData !==null,
 }))
 //if in dev mode mount the dev tools
 if(import.meta.env.DEV){

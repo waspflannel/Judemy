@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useAuthStore } from "../store/auth";
-import jwt_decode from 'jwt-decode'
+import { jwtDecode } from "jwt-decode";
 import Cookies from 'js-cookie'
 
 //function that takes email and pass 
@@ -9,7 +9,7 @@ export const login = async (email , password) => {
     try{
         //sends the parameters email and password
         //and saves the result in data and status
-        const{data,status} = await axios.post('user/login/', {
+        const{data,status} = await axios.post("http://127.0.0.1:8000/api/user/login/", {
             email,
             password
         })
@@ -29,7 +29,7 @@ export const login = async (email , password) => {
 
 export const register = async (fullName  , email , phone , password , password2) =>{
     try{
-        const{data} = await axios.post('user/register/',{
+        const{data} = await axios.post('http://127.0.0.1:8000/api/user/register/',{
             fullName, 
             email, 
             phone, 
@@ -89,7 +89,7 @@ export const setAuthUser = (access_token , refresh_token) =>{
         secure: true
     })
 
-    const user = jwt_decode(access_token) ?? null
+    const user = jwtDecode(access_token) ?? null
 
     //set the user if not null
     if(user){
@@ -101,7 +101,7 @@ export const setAuthUser = (access_token , refresh_token) =>{
 
 export const getRefreshToken = async () =>{
     const refresh_token = Cookies.get("refresh_token")
-    const response = await axios.post("user/login/refresh" , {
+    const response = await axios.post("http://127.0.0.1:8000/api/user/login/refresh" , {
         refresh : refresh_token
     })
     return response.data//return the two new tokens

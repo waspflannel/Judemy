@@ -4,7 +4,7 @@ import { BASE_URL } from './constants'
 import Cookies from 'js-cookie'
 
 
-const useAxios = async () =>{
+const AxiosTokenRefresher = async () =>{
     //gets tokens
     const access_token = Cookies.get('access_token')
     const refresh_token = Cookies.get('refresh_token')
@@ -35,4 +35,4 @@ const useAxios = async () =>{
     return axiosInstance
 
 }
-export default useAxios
+export default AxiosTokenRefresher
