@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-//base template to call our api's
+//base template to call api's
 const axiosInstance = axios.create({
     baseURL: 'http://127.0.0.1:8000/api/',
     timeout: 5000,

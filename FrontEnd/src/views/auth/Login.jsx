@@ -57,10 +57,9 @@ const Login = () => {
                 <br/>
                 <input type='password' name='password' id='password' value={password} onChange={(e)=> setPassword(e.target.value)}></input>
                 <button type='submit'>submit</button>
-            
             </form>
-        
-        
+            <br></br>
+            <Link to={'/reset-password'}>Forgot Password</Link>
         </div>
         
     )
