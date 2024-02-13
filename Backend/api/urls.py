@@ -9,5 +9,9 @@ urlpatterns = [
     path('user/password-reset/<email>/', userauthViews.PasswordResetView.as_view()),
     path("user/password-change/", userauthViews.PasswordChangeView.as_view()),
 
+    #store endpoints
+    path('category/' , storeViews.CategoryListAPIView.as_view()),
+    path('course/' , storeViews.CourseListAPIView.as_view()),
+    path('course/<slug>' , storeViews.CourseDetailAPIView.as_view()),
 
 ]

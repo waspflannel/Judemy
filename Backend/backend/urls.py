@@ -40,8 +40,6 @@ urlpatterns = [
     #path to api docs
     path("",schemaView.with_ui('swagger',cache_timeout=0), name="schema-swagger-ui")
 
-
-
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

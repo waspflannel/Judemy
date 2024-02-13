@@ -35,7 +35,7 @@ class Course(models.Model):
     on_sale = models.BooleanField(default=False)
     featured = models.BooleanField(default=False)
     views = models.PositiveIntegerField(default=0)
-    rating = models.PositiveIntegerField(default=-0)
+    rating = models.PositiveIntegerField(default=0 , null= True , blank= True)
     vendor = models.ForeignKey(Vendor , on_delete= models.CASCADE)
     slug = models.SlugField(unique=True)
     date = models.DateTimeField(auto_now_add=True)
@@ -43,24 +43,28 @@ class Course(models.Model):
     def __str__(self) -> str:
         return self.title
 
-    def save(self,*args , **kwargs):
-        if(self.slug == "" or self.slug == None):
-            self.slug = slugify(self.name)
-
-        super(Course , self).save(*args , **kwargs)
-
-    
     def course_rating(self):
         #get the course rating from review model
-        course_rating = Review.objets.filter(course=self).aggregate(avg_rating = models.Avg("rating"))
+        course_rating = Review.objects.filter(course=self).aggregate(avg_rating = models.Avg("rating"))
         return course_rating['avg_rating']
 
+
+
+    def rating_count(self):
+        rating_count = Review.objects.filter(course = self).count()
+        return rating_count
+
+    def gallery(self):
+        return Gallery.objects.filter(course = self)
     #when a review is saved it triggers the receiver which triggers the save
     #the save is overrided so it saves a new rating wich calls course_rating() which uses
     #aggregate function to calcualte the average.
-    def save(self , *args , **kwargs):
+    def save(self, *args, **kwargs):
+        if (self.slug == "" or self.slug is None):
+            self.slug = slugify(self.title)
+        super(Course, self).save(*args, **kwargs) 
         self.rating = self.course_rating()
-        super(Course , self).save(*args,**kwargs)
+        super(Course, self).save(update_fields=['rating'])  # Update the instance with the new rating
 
 class Gallery(models.Model):
     course = models.ForeignKey(Course , on_delete=models.CASCADE)
