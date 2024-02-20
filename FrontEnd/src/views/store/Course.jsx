@@ -1,5 +1,6 @@
 import React, { useState , useEffect } from 'react'
 import axiosInstance from '../../utils/axios'
+import { Link } from 'react-router-dom'
 
 const Course = () => {
     const [course , setCourse] = useState([])
@@ -21,11 +22,13 @@ const Course = () => {
     return (
         <>
         <div> 
-        <h1 style={{'text-decoration': 'underline'}}>Products</h1>
+        <h1 style={{'textDecoration': 'underline'}}>Products</h1>
         {course?.map((c ,index) =>(
             <ul>
-            <div>
+            <div key={index}>
+            <Link to = {`/detail/${c.slug}`}>
             <h3>{c.title}</h3>
+            </Link>
             <p>{c.description}</p>
             <p>${c.price}</p>
             <br></br>
@@ -38,7 +41,7 @@ const Course = () => {
         <h1 style={{'text-decoration': 'underline'}}>Categories</h1>
         {category?.map((c ,index) =>(
             <ul>
-            <div>
+            <div key={index}>
             <h3>{c.title}</h3>
             </div>
             </ul>

@@ -229,3 +229,15 @@ class Coupon(models.Model):
     
 
 
+class Tax(models.Model):
+    country = models.CharField(max_length=100)
+    rate = models.IntegerField(default = 5)
+    active = models.BooleanField(default = True)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self) -> str:
+        return self.country
+
+    class Meta:
+        ordering = ['country']
+

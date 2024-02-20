@@ -7,6 +7,7 @@ import LogoutReroute from './views/auth/LogoutReroute'
 import Register from './views/auth/Register'
 import ResetPassword from './views/auth/ResetPassword'
 import Course from './views/store/Course'
+import CourseDetail from './views/store/CourseDetail'
 function App() {
   const [count, setCount] = useState(0)
 
@@ -23,6 +24,7 @@ function App() {
 
       {/* store componenets*/}
         <Route path ='/' element={<Course/>}></Route>
+        <Route path ='/detail/:slug/' element={<CourseDetail/>}></Route>
       </Routes>
     </BrowserRouter>
   )
