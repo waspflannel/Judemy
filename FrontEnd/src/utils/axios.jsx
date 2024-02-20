@@ -10,4 +10,14 @@ const axiosInstance = axios.create({
         Accept: 'application/json',
     }
 })
-export default axiosInstance
+
+const getCourseInformation = (courseSlug, setCourse) => {
+    axiosInstance.get(`course/${courseSlug}`).then((response) => {
+        setCourse(response.data)
+    })
+}
+
+export {
+    axiosInstance,
+    getCourseInformation
+}

@@ -1,5 +1,5 @@
 import {React ,useState} from 'react'
-import axiosInstance from '../../utils/axios'
+import { axiosInstance } from '../../utils/axios'
 import { useNavigate } from 'react-router-dom'
 function ResetPassword() {
 

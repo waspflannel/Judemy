@@ -9,8 +9,6 @@ import ResetPassword from './views/auth/ResetPassword'
 import Course from './views/store/Course'
 import CourseDetail from './views/store/CourseDetail'
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <BrowserRouter>
       <Routes>

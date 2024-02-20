@@ -1,7 +1,7 @@
 import React from 'react'
 import { useSearchParams , useNavigate} from 'react-router-dom'
 import { useState } from 'react'
-import axiosInstance from '../../utils/axios'
+import { axiosInstance } from '../../utils/axios'
 
 export const CreatePassword = () => {
     const [password , setNewPassword] = useState('')
