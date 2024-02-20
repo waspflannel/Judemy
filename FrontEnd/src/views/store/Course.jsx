@@ -1,8 +1,10 @@
 import React, { useState , useEffect } from 'react'
 import { axiosInstance } from '../../utils/axios'
 import { Link } from 'react-router-dom'
-
+import { useAuthStore } from '../../store/auth'
+import NavBar from '../functions/NavBar'
 const Course = () => {
+
     const [course , setCourse] = useState([])
     const [category , setCategory] = useState([])
     useEffect(() => {
@@ -21,6 +23,7 @@ const Course = () => {
     console.log(course);
     return (
         <>
+        <NavBar/>
         <div> 
         <h1 style={{'textDecoration': 'underline'}}>Products</h1>
         {course?.map((c ,index) =>(

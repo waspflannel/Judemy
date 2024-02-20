@@ -2,9 +2,18 @@ import axios from "axios";
 import { useAuthStore } from "../store/auth";
 import { jwtDecode } from "jwt-decode";
 import Cookies from 'js-cookie'
-
+import Swal from "sweetalert2";
 //function that takes email and pass 
 //and authenticates user
+
+const toast = Swal.mixin({
+    toast:true,
+    position:"top",
+    showConfirmButton:false,
+    timer:3000,
+    timerProgressBar:true
+})
+
 export const login = async (email , password) => {
     try{
         //sends the parameters email and password
@@ -16,13 +25,22 @@ export const login = async (email , password) => {
         //status 200 means everything is ok
         if(status === 200){
             setAuthUser(data.access,data.refresh)
+            toast.fire({
+                icon:'success',
+                title:"Login Successful"
+            })
         }
         return {data , error:null}
     }
     catch(error){
+        toast.fire({
+            icon:'error',
+            title:"Login Not Successful"
+        })
         return{
         data:null,
         error : error.response.data?.detail || "somethign went wrong"
+        
         }
     }
 }
@@ -38,9 +56,17 @@ export const register = async (fullName  , email , phone , password , password2)
         })
         //once the registration went through log in the user
         await login(email , password)
+        toast.fire({
+            icon:'success',
+            title:"Registration Successful"
+        })
         return {data , error:null}
     }
     catch(error){
+        toast.fire({
+            icon:'error',
+            title:"Registration Not Successful"
+        })
         return{
         data:null,
         error : error.response.data?.detail || "somethign went wrong"
