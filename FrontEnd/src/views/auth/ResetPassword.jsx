@@ -20,7 +20,7 @@ function ResetPassword() {
             <div>
                 <BigHeader>Welcome To <br></br>Judemy.</BigHeader>
                 <InputLabel>Email</InputLabel>
-                <InputField onChange={(e)=> setEmail(e.target.value)} type='email' placeholder='Enter Email' name='' id=''></InputField>
+                <InputField onChange={(e)=> setEmail(e.target.value)} type='email' name='' id=''></InputField>
                 <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '10px'}}>
                     <MainButton type='submit' onClick={handleEmailSubmit} >Reset Password</MainButton>
                     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'end'}}>
