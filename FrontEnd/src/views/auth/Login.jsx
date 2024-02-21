@@ -1,7 +1,9 @@
 import React , {useState , useEffect} from 'react'
 import {login} from '../../utils/auth'
-import { useNavigate , Link} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useAuthStore} from '../../store/auth'
+import { AuthPage } from '../templates/auth'
+import { InputField, BigHeader, InputLabel, MainButton, HyperLinkMain } from '../templates/custom-components.styles'
 
 const Login = () => {
     const [email , setEmail] = useState("") 
@@ -49,19 +51,21 @@ const Login = () => {
     };
     
     return (
-        <div>
-            <h2>Login Page</h2>
-            <form onSubmit={handleLogin}>
-                <input type='text' name='email' id='email' value={email} onChange={(e)=> setEmail(e.target.value)}></input>
-                <br/>
-                <br/>
-                <input type='password' name='password' id='password' value={password} onChange={(e)=> setPassword(e.target.value)}></input>
-                <button type='submit'>submit</button>
-            </form>
-            <br></br>
-            <Link to={'/reset-password'}>Forgot Password</Link>
-        </div>
-        
+        <AuthPage>
+            <div>
+                <BigHeader>Welcome To <br></br>Judemy.</BigHeader>
+                <form onSubmit={handleLogin}>
+                    <InputLabel>Username</InputLabel>
+                    <InputField type='text' name='email' id='email' value={email} onChange={(e)=> setEmail(e.target.value)}></InputField>
+                    <InputLabel>Password</InputLabel>
+                    <InputField type='password' name='password' id='password' value={password} onChange={(e)=> setPassword(e.target.value)}></InputField>
+                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                        <MainButton type='submit'>Login</MainButton>
+                        <HyperLinkMain to={'/reset-password'}>Forgot Password?</HyperLinkMain>
+                    </div>
+                </form>
+            </div>
+        </AuthPage>
     )
 }
 
