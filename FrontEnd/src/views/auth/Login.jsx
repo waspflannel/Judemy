@@ -51,13 +51,16 @@ const Login = () => {
             <div>
                 <BigHeader>Welcome To <br></br>Judemy.</BigHeader>
                 <form onSubmit={handleLogin}>
-                    <InputLabel>Username</InputLabel>
+                    <InputLabel>Email</InputLabel>
                     <InputField type='text' name='email' id='email' value={email} onChange={(e)=> setEmail(e.target.value)}></InputField>
                     <InputLabel>Password</InputLabel>
                     <InputField type='password' name='password' id='password' value={password} onChange={(e)=> setPassword(e.target.value)}></InputField>
-                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '10px'}}>
                         <MainButton type='submit'>Login</MainButton>
-                        <HyperLinkMain to={'/reset-password'}>Forgot Password?</HyperLinkMain>
+                        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'end'}}>
+                            <HyperLinkMain to={'/register'}>Register?</HyperLinkMain>
+                            <HyperLinkMain to={'/reset-password'}>Forgot Password?</HyperLinkMain>
+                        </div>
                     </div>
                 </form>
             </div>
