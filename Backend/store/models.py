@@ -92,7 +92,7 @@ class Cart(models.Model):
     def __str__(self) -> str:
         return f"{self.cart_id} - {self.course.title}"
 
-
+        
 class CartOrder(models.Model):
     PAYMENT_STATUS = (
             ("paid" , "Paid"),
