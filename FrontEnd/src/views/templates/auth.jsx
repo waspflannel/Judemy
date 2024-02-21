@@ -21,7 +21,7 @@ const AuthPage = ({ children }) => {
     return (
         <AuthWrapper>
             <AuthSectionWrapper $width={50} $mainColour={false} $display={width.width < 600}>
-                <img src={Logo} width="100%"/>
+                <img draggable={false} src={Logo} width="100%"/>
             </AuthSectionWrapper>
             <AuthSectionWrapper $width={width.width < 600 ? 100 : 50} $mainColour={true} $display={false}>{children}</AuthSectionWrapper>
         </AuthWrapper>

@@ -78,7 +78,7 @@ class Gallery(models.Model):
     
 
 class Cart(models.Model):
-    course = models.ForeignKey(Course , on_delete=models.CASCADE)
+    course = models.ForeignKey(Course , on_delete=models.CASCADE , null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE , null=True)
     qty = models.PositiveIntegerField(default=0)
     price = models.DecimalField(default=0.00 , max_digits=12 , decimal_places=2)

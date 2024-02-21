@@ -42,18 +42,13 @@ const CourseDetail = () => {
 
     const handleCart = async () =>{
         try {
-            // console.log("Course ID: " , course.pid)
-            // console.log("Course Price: " , course.price)
-            // console.log("Country: ",currentCountry)
-            // console.log("User ID: ",userData?.user_id)
-            // console.log("Cart ID: " , cartID)
     
             const formData = new FormData()
             formData.append("course_id" , course.pid)
             formData.append("user_id" , userData?.user_id)
             formData.append("price" ,course.price)
             formData.append("country" , currentCountry)
-            formData.append("cart_id" , cartID)
+            formData.append("cart_id" , userData?.user_id)
     
             const response = await axiosInstance.post(`cart-view` , formData)
 
