@@ -3,7 +3,7 @@ import {register} from '../../utils/auth'
 import { useNavigate , Link} from 'react-router-dom'
 import { useAuthStore} from '../../store/auth'
 import { AuthPage } from '../templates/auth'
-import { BigHeader } from '../templates/custom-components.styles'
+import { BigHeader, InputField, InputLabel, MainButton, HyperLinkMain } from '../templates/custom-components.styles'
 
 function Register() {
 const [name , setName] = useState("")
@@ -51,12 +51,20 @@ const handleRegister = async (e) =>{
         <div>
             <BigHeader>Welcome To <br></br>Judemy.</BigHeader>
             <form onSubmit={handleRegister}>
-                <input type='text' placeholder='full name' name='' id='' onChange={(e)=>setName(e.target.value)}></input>
-                <input type='email' placeholder='Email' name='' id=''  onChange={(e)=>setEmail(e.target.value)}></input>
-                <input type='text' placeholder='phone number' name='' id=''  onChange={(e)=>setPhone(e.target.value)} ></input>
-                <input type='password' placeholder='password' name='' id=''  onChange={(e)=>setPassword(e.target.value)}></input>
-                <input type='password' placeholder='confirm password' name='' id=''  onChange={(e)=>setconfirmPassword(e.target.value)}></input>
-                <button type='submit'>Register</button>
+                <InputLabel>Full Name</InputLabel>
+                <InputField type='text' name='' id='' onChange={(e)=>setName(e.target.value)}></InputField>
+                <InputLabel>Email</InputLabel>
+                <InputField type='email' name='' id=''  onChange={(e)=>setEmail(e.target.value)}></InputField>
+                <InputLabel>Phone Number</InputLabel>
+                <InputField type='text' name='' id=''  onChange={(e)=>setPhone(e.target.value)} ></InputField>
+                <InputLabel>Password</InputLabel>
+                <InputField type='password' name='' id=''  onChange={(e)=>setPassword(e.target.value)}></InputField>
+                <InputLabel>Confirm Password</InputLabel>
+                <InputField type='password' name='' id=''  onChange={(e)=>setconfirmPassword(e.target.value)}></InputField>
+                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '10px'}}>
+                    <MainButton type='submit'>Register</MainButton>
+                    <HyperLinkMain to={'/login'}>Login?</HyperLinkMain>
+                </div>
             </form>
         </div>
     </AuthPage>
