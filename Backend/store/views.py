@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from userauths.models import User
-from store.models import Tax ,Category , Course , Gallery , Cart , CartOrder , CartOrderItem , CourseFaq , Wishlist  ,Review , Notification , Coupon
+from store.models import CartItem,Tax ,Category , Course , Gallery , Cart , CartOrder , CartOrderItem , CourseFaq , Wishlist  ,Review , Notification , Coupon
 from store.serializers import CourseSerializer , CategorySerializer , CartSerializer  , CartOrderItemSerializer , CartOrderItemSerializer
 from rest_framework import generics , status
 from rest_framework.response import Response
@@ -60,31 +60,45 @@ class CartAPIView(generics.ListCreateAPIView):
         
         #check to see if a cart already exists
         cart = Cart.objects.filter(cart_id = user_id).first()
+        courseExists = CartItem.objects.filter(course=course , cart = cart).first()
         #if it does update it
         if(cart):
-            cart.course = course
+            if(courseExists):
+                return Response({'message' : 'Item Already in cart'},  status = status.HTTP_200_OK)
+            cart_item = CartItem.objects.create(
+                cart = cart,
+                course = course,
+                qty =1,
+                price = price,
+                sub_total = Decimal(price)
+            )
+            cart_item.save()
+
             cart.user = user
-            cart.qty = 1
-            cart.price = price
-            cart.sub_total = Decimal(price)
-            cart.tax =  Decimal(price) * Decimal(tax_rate)
+            cart.tax =  Decimal(cart_item.price) * Decimal(tax_rate)
             cart.country = country
             cart.cart_id = user_id
-            cart.total = cart.sub_total + cart.tax
+            cart.total = cart_item.sub_total + cart.tax
             cart.save()
             return Response({'message' : 'cart updated successfully'},  status = status.HTTP_200_OK)
         #if it doesnt make a new cart
         else:
             cart = Cart()
-            cart.course = course
             cart.user = user
-            cart.qty = 1
-            cart.price = price
-            cart.sub_total = Decimal(price)
-            cart.tax = Decimal(price) * Decimal(tax_rate)
             cart.country = country
             cart.cart_id = user_id
-            cart.total = cart.sub_total + cart.tax
+            cart.save()
+
+            cart_item = CartItem.objects.create(
+                cart = cart,
+                course = course,
+                qty =1,
+                price = price,
+                sub_total = Decimal(price)
+            )
+            cart_item.save()
+            cart.tax =  Decimal(cart_item.price) * Decimal(tax_rate)
+            cart.total = cart_item.sub_total + cart.tax
             cart.save()
             return Response({'message' : 'cart Created successfully'},  status = status.HTTP_201_CREATED)
 

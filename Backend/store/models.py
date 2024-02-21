@@ -78,21 +78,25 @@ class Gallery(models.Model):
     
 
 class Cart(models.Model):
-    course = models.ForeignKey(Course , on_delete=models.CASCADE , null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE , null=True)
-    qty = models.PositiveIntegerField(default=0)
-    price = models.DecimalField(default=0.00 , max_digits=12 , decimal_places=2)
-    sub_total = models.DecimalField(default=0.00 , max_digits=12 , decimal_places=2)
     tax = models.DecimalField(default=0.00,max_digits=12,decimal_places=2)
     total = models.DecimalField(default=0.00,max_digits=12,decimal_places=2)
     country = models.CharField(max_length=100 , null= True , blank= True)
     cart_id = models.CharField(max_length=1000,null=True , blank=True)
     date = models.DateTimeField(auto_now_add= True)
+    def __str__(self) -> str:
+        return f"{self.cart_id}"
+
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart , on_delete=models.CASCADE, related_name='cart_items')
+    course = models.ForeignKey(Course , on_delete=models.CASCADE)
+    qty = models.IntegerField(default=1)
+    price = models.DecimalField(default=0.00 , max_digits=12 , decimal_places=2)
+    sub_total = models.DecimalField(default=0.00 , max_digits=12 , decimal_places=2)
 
     def __str__(self) -> str:
-        return f"{self.cart_id} - {self.course.title}"
+        return self.course.title
 
-        
 class CartOrder(models.Model):
     PAYMENT_STATUS = (
             ("paid" , "Paid"),
