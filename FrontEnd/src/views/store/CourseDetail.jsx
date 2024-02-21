@@ -1,15 +1,27 @@
 import React, { useState , useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { getCourseInformation } from '../../utils/axios'
+import { axiosInstance, getCourseInformation } from '../../utils/axios'
 import GetCurrentAddress from '../functions/UserCountry'
 import UserData from '../functions/UserData'
 import { CountryPicker } from '../functions/CountryPicker'
+import CartID from '../functions/CartID'
+import Swal from 'sweetalert2'
+import NavBar from '../functions/NavBar'
 
 const CourseDetail = () => {
     const [course , setCourse] = useState([])
     const [country , setCountry] = useState('')
     const userData = UserData()
     const param = useParams()
+    const cartID = CartID()
+
+    const toast = Swal.mixin({
+        toast:true,
+        position:"top",
+        showConfirmButton:false,
+        timer:3000,
+        timerProgressBar:true
+    })
 
 
     useEffect(()=>{
@@ -28,14 +40,36 @@ const CourseDetail = () => {
 
     var currentCountry = getCountry()
 
-    const handleCart = () =>{
-        console.log("Course ID: " , course.pid)
-        console.log("Course Price: " , course.price)
-        console.log("Country: ",currentCountry)
-        console.log("User ID: ",userData?.user_id)
+    const handleCart = async () =>{
+        try {
+            // console.log("Course ID: " , course.pid)
+            // console.log("Course Price: " , course.price)
+            // console.log("Country: ",currentCountry)
+            // console.log("User ID: ",userData?.user_id)
+            // console.log("Cart ID: " , cartID)
+    
+            const formData = new FormData()
+            formData.append("course_id" , course.pid)
+            formData.append("user_id" , userData?.user_id)
+            formData.append("price" ,course.price)
+            formData.append("country" , currentCountry)
+            formData.append("cart_id" , cartID)
+    
+            const response = await axiosInstance.post(`cart-view` , formData)
+
+            console.log(response)
+            Swal.fire({
+                icon:'success',
+                title:response.data.message
+            })
+            
+        } catch (error) {
+            console.log(error)
+        }
     }
     return (
         <>
+        <NavBar/>
         <div>
         <h1>Course Details</h1>
         <h3>Title: {course.title}</h3>

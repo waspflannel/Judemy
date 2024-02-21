@@ -39,7 +39,7 @@ const handleRegister = async (e) =>{
         alert(JSON.stringify(error))
     }
     else{
-        navigate("/")
+        navigate("/login")
         alert("successfully Registered")
         resetForm()
     }
