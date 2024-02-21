@@ -59,7 +59,7 @@ class CartAPIView(generics.ListCreateAPIView):
             tax_rate = 13/100
         
         #check to see if a cart already exists
-        cart = Cart.objects.filter(cart_id = cart_id , course = course).first()
+        cart = Cart.objects.filter(cart_id = user_id).first()
         #if it does update it
         if(cart):
             cart.course = course
@@ -69,8 +69,7 @@ class CartAPIView(generics.ListCreateAPIView):
             cart.sub_total = Decimal(price)
             cart.tax =  Decimal(price) * Decimal(tax_rate)
             cart.country = country
-            cart.cart_id = cart_id
-
+            cart.cart_id = user_id
             cart.total = cart.sub_total + cart.tax
             cart.save()
             return Response({'message' : 'cart updated successfully'},  status = status.HTTP_200_OK)
@@ -84,7 +83,7 @@ class CartAPIView(generics.ListCreateAPIView):
             cart.sub_total = Decimal(price)
             cart.tax = Decimal(price) * Decimal(tax_rate)
             cart.country = country
-            cart.cart_id = cart_id
+            cart.cart_id = user_id
             cart.total = cart.sub_total + cart.tax
             cart.save()
             return Response({'message' : 'cart Created successfully'},  status = status.HTTP_201_CREATED)

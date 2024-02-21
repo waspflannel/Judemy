@@ -78,7 +78,6 @@ export const logout = () =>{
     //remove jwt token from the user
     Cookies.remove("access_token")
     Cookies.remove("refresh_token")
-    
     //set user state to null
     useAuthStore.getState().setUser(null)
 }

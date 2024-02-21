@@ -40,7 +40,6 @@ const handleRegister = async (e) =>{
     }
     else{
         navigate("/login")
-        alert("successfully Registered")
         resetForm()
     }
     setIsLoading(false)

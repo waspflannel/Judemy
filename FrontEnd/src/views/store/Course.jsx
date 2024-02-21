@@ -3,6 +3,7 @@ import { axiosInstance } from '../../utils/axios'
 import { Link } from 'react-router-dom'
 import { useAuthStore } from '../../store/auth'
 import NavBar from '../functions/NavBar'
+
 const Course = () => {
 
     const [course , setCourse] = useState([])

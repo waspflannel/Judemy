@@ -34,17 +34,13 @@ const Login = () => {
         try {
             const {error } = await login(email, password);
             if (error) {
-                console.log("error");
-                alert(error);
             } else {
                 console.log("redirecting");
                 navigate('/');
-                alert("successfully logged in")
                 resetForm();
             }
         } catch (error) {
             // Handle any errors that might occur during login
-            alert("An error occurred during login");
             console.error(error);
         }
         setIsLoading(false);
