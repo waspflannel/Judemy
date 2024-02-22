@@ -8,20 +8,20 @@ const NavBar = () => {
     ])
     console.log(user())
   return (
-    <>
+    <div>
     {isLoggedIn()
         ?
-        <>
+        <div style={{height: "10vh"}}>
         <Link to="/logout">Logout</Link><br></br> 
         <Link>{user().username}</Link>
         <Link to = "/cart/">Cart</Link>
-        </>
-        :<> 
+        </div>
+        :<div style={{height: "10vh"}}> 
             <Link to='/register'>Register</Link> 
             <Link to='/login'>Login</Link>
-        </>
+        </div>
     }
-    </>
+    </div>
   )
 
 }
