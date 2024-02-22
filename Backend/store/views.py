@@ -134,3 +134,23 @@ class CartItemListView(generics.ListAPIView):
             #get all cart items that are in the cart
             queryset = CartItem.objects.filter(cart=carts) 
             return queryset
+
+
+class CartItemDeleteAPIView(generics.DestroyAPIView):
+    serializer_class = CartItemSerializer
+    lookup_field = 'cart'
+
+    def get_object(self):
+        cart_id = self.kwargs['cart_id']
+        user_id = self.kwargs.get('user_id')
+        course_pid = self.kwargs['course_pid']
+
+        if user_id:
+            carts = Cart.objects.get(cart_id = cart_id)
+            courses = Course.objects.get(pid = course_pid)
+            cartItemToDelete = CartItem.objects.get(cart = carts , course = courses)
+        else:
+            return
+        
+        return cartItemToDelete
+         
