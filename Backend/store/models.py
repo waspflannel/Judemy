@@ -83,6 +83,7 @@ class Cart(models.Model):
     total = models.DecimalField(default=0.00,max_digits=12,decimal_places=2)
     country = models.CharField(max_length=100 , null= True , blank= True)
     cart_id = models.CharField(max_length=1000,null=True , blank=True)
+    sub_total = models.DecimalField(default=0.00 , max_digits=12 , decimal_places=2)
     date = models.DateTimeField(auto_now_add= True)
     def __str__(self) -> str:
         return f"{self.cart_id}"
@@ -92,7 +93,6 @@ class CartItem(models.Model):
     course = models.ForeignKey(Course , on_delete=models.CASCADE)
     qty = models.IntegerField(default=1)
     price = models.DecimalField(default=0.00 , max_digits=12 , decimal_places=2)
-    sub_total = models.DecimalField(default=0.00 , max_digits=12 , decimal_places=2)
 
     def __str__(self) -> str:
         return self.course.title

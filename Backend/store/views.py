@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from userauths.models import User
 from store.models import CartItem,Tax ,Category , Course , Gallery , Cart , CartOrder , CartOrderItem , CourseFaq , Wishlist  ,Review , Notification , Coupon
-from store.serializers import CourseSerializer , CategorySerializer , CartSerializer  , CartOrderItemSerializer , CartOrderItemSerializer
+from store.serializers import CartItemSerializer,CourseSerializer , CategorySerializer , CartSerializer  , CartOrderItemSerializer , CartOrderItemSerializer
 from rest_framework import generics , status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny , IsAuthenticated
@@ -70,15 +70,15 @@ class CartAPIView(generics.ListCreateAPIView):
                 course = course,
                 qty =1,
                 price = price,
-                sub_total = Decimal(price)
             )
             cart_item.save()
 
             cart.user = user
-            cart.tax =  Decimal(cart_item.price) * Decimal(tax_rate)
             cart.country = country
             cart.cart_id = user_id
-            cart.total = cart_item.sub_total + cart.tax
+            cart.sub_total = Decimal(cart.sub_total) + Decimal(cart_item.price)
+            cart.tax =  Decimal(cart.sub_total) * Decimal(tax_rate)
+            cart.total = cart.sub_total + cart.tax
             cart.save()
             return Response({'message' : 'cart updated successfully'},  status = status.HTTP_200_OK)
         #if it doesnt make a new cart
@@ -94,11 +94,43 @@ class CartAPIView(generics.ListCreateAPIView):
                 course = course,
                 qty =1,
                 price = price,
-                sub_total = Decimal(price)
+                
             )
+            cart.sub_total = Decimal(cart.sub_total) + Decimal(cart_item.price)
             cart_item.save()
-            cart.tax =  Decimal(cart_item.price) * Decimal(tax_rate)
-            cart.total = cart_item.sub_total + cart.tax
+            cart.tax =  Decimal(cart.sub_total) * Decimal(tax_rate)
+            cart.total = cart.sub_total + cart.tax
             cart.save()
             return Response({'message' : 'cart Created successfully'},  status = status.HTTP_201_CREATED)
 
+
+class CartListView(generics.ListAPIView):
+    serializer_class = CartSerializer
+    permission_classes = [AllowAny,]
+    queryset = Cart.objects.all()
+
+    def get_queryset(self):
+        user_id = self.kwargs.get('user_id')
+
+        if(user_id is not None):
+            user = User.objects.get(id = user_id)
+            queryset = Cart.objects.filter(user = user ,cart_id = user_id )
+        
+        else:
+            return
+        
+        return queryset
+
+class CartItemListView(generics.ListAPIView):
+    serializer_class = CartItemSerializer
+    permission_classes = [AllowAny,]
+    queryset = CartItem.objects.all()
+
+    def get_queryset(self):
+        cart_number = self.kwargs.get('cart_id')
+        if cart_number is not None:
+            #get cart where cart_id is the number in url
+            carts = Cart.objects.get(cart_id = cart_number)
+            #get all cart items that are in the cart
+            queryset = CartItem.objects.filter(cart=carts) 
+            return queryset

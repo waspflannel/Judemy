@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from store.models import Category , Course , Gallery , Cart , CartOrder , CartOrderItem , CourseFaq , Wishlist  ,Review , Notification , Coupon
+from store.models import CartItem,Category , Course , Gallery , Cart , CartOrder , CartOrderItem , CourseFaq , Wishlist  ,Review , Notification , Coupon
 from vendor.models import Vendor
 class CategorySerializer(serializers.ModelSerializer):
     class Meta: 
@@ -19,6 +19,19 @@ class CartSerializer(serializers.ModelSerializer):
 
     def __init__(self , *args , **kwargs):
         super(CartSerializer , self).__init__(*args , **kwargs)
+        request = self.context.get("request")
+        if request and request.method == "POST":
+            self.Meta.depth =0
+        else:
+            self.Meta.depth = 3
+
+class CartItemSerializer(serializers.ModelSerializer):
+    class Meta: 
+        model = CartItem
+        fields = "__all__"
+
+    def __init__(self , *args , **kwargs):
+        super(CartItemSerializer , self).__init__(*args , **kwargs)
         request = self.context.get("request")
         if request and request.method == "POST":
             self.Meta.depth =0

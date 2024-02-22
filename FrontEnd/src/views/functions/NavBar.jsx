@@ -14,6 +14,7 @@ const NavBar = () => {
         <>
         <Link to="/logout">Logout</Link><br></br> 
         <Link>{user().username}</Link>
+        <Link to = "/cart/">Cart</Link>
         </>
         :<> 
             <Link to='/register'>Register</Link> 

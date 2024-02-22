@@ -14,7 +14,7 @@ import { setAuthUser } from './utils/auth'
 import Cookie from 'js-cookie'
 import { jwtDecode } from 'jwt-decode'
 import { useAuthStore } from './store/auth'
-
+import Cart from './views/store/Cart'
 function App() {
   useEffect(()=>{
     let access_token = Cookie.get("access_token")
@@ -39,6 +39,7 @@ function App() {
       {/* store componenets*/}
         <Route path ='/' element={<Course/>}></Route>
         <Route path ='/detail/:slug/' element={<CourseDetail/>}></Route>
+        <Route path='/cart/' element = {<Cart/>}></Route>
       </Routes>
     </BrowserRouter>
   )
