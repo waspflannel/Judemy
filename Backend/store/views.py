@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from userauths.models import User
 from store.models import CartItem,Tax ,Category , Course , Gallery , Cart , CartOrder , CartOrderItem , CourseFaq , Wishlist  ,Review , Notification , Coupon
-from store.serializers import CartItemSerializer,CourseSerializer , CategorySerializer , CartSerializer  , CartOrderItemSerializer , CartOrderItemSerializer
+from store.serializers import CartOrderSerializer,CartItemSerializer,CourseSerializer , CategorySerializer , CartSerializer  , CartOrderItemSerializer , CartOrderItemSerializer
 from rest_framework import generics , status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny , IsAuthenticated
@@ -161,3 +161,44 @@ class CartItemDeleteAPIView(generics.DestroyAPIView):
         
         return cartItemToDelete
          
+class CreateOrderAPIView(generics.CreateAPIView):
+    serializer_class = CartOrderSerializer
+    queryset = CartOrder.objects.all()
+    permission_classes = [AllowAny]
+    
+    def create(self , request):
+        payload = request.data
+
+        full_name = payload['full_name']
+        email = payload['email']
+        phone_number = payload['phone_number']
+        address = payload['address']
+        city = payload['city']
+        country = payload['country']
+        cart_id = payload['cart_id']
+        user_id = payload['user_id']
+
+        if user_id !=0:
+            user = User.objects.get(id = user_id)
+
+        cart = Cart.objects.get(cart_id = cart_id)
+        cart_items = CartItem.objects.filter(cart = cart)
+    
+        order = CartOrder.objects.create(
+            buyer = user,
+            full_name = full_name,
+            email = email,
+            mobile = phone_number,
+            address = address,
+            city = city,
+            country = country,
+            tax =cart.tax,
+            total = cart.total,
+            initial_total = cart.sub_total,
+        )
+        for item in cart_items:
+            order.cart_item = item
+        order.save()
+        return Response({"message":"order created successfully","order id":order.oid})
+        
+

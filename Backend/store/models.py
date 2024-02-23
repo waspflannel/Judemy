@@ -104,12 +104,11 @@ class CartOrder(models.Model):
             ("processing" , "Processing"),
             ("cancelled" , "Cancelled"),
     )
-    vendor = models.ManyToManyField(Vendor , blank= True)
     buyer = models.ForeignKey(User , on_delete=models.SET_NULL , null= True ,blank=True)
     tax = models.DecimalField(default=0.00,max_digits=12,decimal_places=2)
     total = models.DecimalField(default=0.00,max_digits=12,decimal_places=2)
     payment_status = models.CharField(choices=PAYMENT_STATUS , max_length= 100 , default="pending")
-
+    cart_item = models.ForeignKey(CartItem , on_delete=models.SET_NULL , null= True ,blank=True)
 
     #coupons
     initial_total = models.DecimalField(default=0.00 , max_digits=12 , decimal_places=2)
@@ -122,7 +121,7 @@ class CartOrder(models.Model):
 
     address = models.CharField(max_length=100 , null=True , blank= True)
     city = models.CharField(max_length=100 , null=True , blank= True)
-    province = models.CharField(max_length=100 , null=True , blank= True)
+    country = models.CharField(max_length=100 , null=True , blank= True)
 
     #order id
     oid = ShortUUIDField(unique= True , length = 10 , alphabet = "abcdefg12345")
