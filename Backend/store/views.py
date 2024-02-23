@@ -33,7 +33,17 @@ class CartAPIView(generics.ListCreateAPIView):
     serializer_class = CartSerializer
     permission_classes = [AllowAny,]
 
+    def getTaxRate(self, country):
+        #get the country tax
+        tax = Tax.objects.filter(country = country).first()
+        #calculate tax
+        if tax:
+            return tax.rate/100
+        else:
+            return 13/100
+
     def create(self,request , *args , **kwargs):
+
         #get payload info
         payload = request.data
         course_id = payload['course_id']
@@ -50,13 +60,6 @@ class CartAPIView(generics.ListCreateAPIView):
             user = User.objects.get(id = user_id)
         else:
             user = None
-        #get the country tax
-        tax = Tax.objects.filter(country = country).first()
-        #calculate tax
-        if tax:
-            tax_rate = tax.rate/100
-        else:
-            tax_rate = 13/100
         
         #check to see if a cart already exists
         cart = Cart.objects.filter(cart_id = user_id).first()
@@ -72,7 +75,7 @@ class CartAPIView(generics.ListCreateAPIView):
                 price = price,
             )
             cart_item.save()
-
+            tax_rate = self.getTaxRate(country)
             cart.user = user
             cart.country = country
             cart.cart_id = user_id
@@ -134,3 +137,27 @@ class CartItemListView(generics.ListAPIView):
             #get all cart items that are in the cart
             queryset = CartItem.objects.filter(cart=carts) 
             return queryset
+
+
+class CartItemDeleteAPIView(generics.DestroyAPIView):
+    serializer_class = CartItemSerializer
+    lookup_field = 'cart'
+
+    def get_object(self):
+        cart_id = self.kwargs['cart_id']
+        user_id = self.kwargs.get('user_id')
+        course_pid = self.kwargs['course_pid']
+
+        if user_id:
+            carts = Cart.objects.get(cart_id = cart_id)
+            courses = Course.objects.get(pid = course_pid)
+            cartItemToDelete = CartItem.objects.get(cart = carts , course = courses)
+            carts.sub_total = Decimal(carts.sub_total) - Decimal(courses.price)
+            carts.tax = Decimal(carts.tax) - (Decimal(courses.price) * Decimal(0.13))
+            carts.total = Decimal(carts.sub_total) + Decimal(carts.tax)
+            carts.save()
+        else:
+            return
+        
+        return cartItemToDelete
+         

@@ -50,11 +50,11 @@ const Cart = () => {
         },[])
     }
 
-    const onRemoveClick = (c) => {
+    const onRemoveClick = async (c) => {
         if(c?.cart?.id && c?.course?.pid){
-            const url = `/cart-delete/${c.cart.id}/${c.course.pid}/${c.cart.id}`
-            console.log(url)
-            axiosInstance.delete(url).then(fetchCartData(c.cart.id));
+            const url = `/cart-delete/${c.cart.cart_id}/${c.course.pid}/${c.cart.cart_id}`
+            await axiosInstance.delete(url)
+            fetchCartData(c.cart.cart_id);
         }
     }
 
@@ -83,9 +83,9 @@ const Cart = () => {
                         }
                     </CartWrapperMiddle>
                     <CartWrapperBottom>
-                        <p>SubTotal: { cartItems[0]?.cart.sub_total } </p>
-                        <p>Tax: { cartItems[0]?.cart.tax }</p>
-                        <p>Total: { cartItems[0]?.cart?.total }</p>
+                        <p>SubTotal: { cartItems[0]?.cart.sub_total ?? 0 } </p>
+                        <p>Tax: { cartItems[0]?.cart.tax ?? 0 }</p>
+                        <p>Total: { cartItems[0]?.cart?.total ?? 0 }</p>
                         <MainButton>Checkout</MainButton>
                     </CartWrapperBottom>
                 </CartWrapperRight>
