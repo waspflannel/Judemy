@@ -75,18 +75,24 @@ class CartAPIView(generics.ListCreateAPIView):
                 price = price,
             )
             cart_item.save()
+            tax_rate = 13/100
             tax_rate = self.getTaxRate(country)
             cart.user = user
             cart.country = country
             cart.cart_id = user_id
-            cart.sub_total = Decimal(cart.sub_total) + Decimal(cart_item.price)
+            cart.sub_total = Decimal(cart.sub_total) + Decimal(cart_item.course.price)
             cart.tax =  Decimal(cart.sub_total) * Decimal(tax_rate)
             cart.total = cart.sub_total + cart.tax
+
+            print(cart.sub_total , cart.tax , cart.total)
+            print("hi")
             cart.save()
             return Response({'message' : 'cart updated successfully'},  status = status.HTTP_200_OK)
         #if it doesnt make a new cart
         else:
             cart = Cart()
+            tax_rate = 13/100
+            tax_rate = self.getTaxRate(country)
             cart.user = user
             cart.country = country
             cart.cart_id = user_id
@@ -103,6 +109,8 @@ class CartAPIView(generics.ListCreateAPIView):
             cart_item.save()
             cart.tax =  Decimal(cart.sub_total) * Decimal(tax_rate)
             cart.total = cart.sub_total + cart.tax
+
+            print(cart.sub_total , cart.tax , cart.total)
             cart.save()
             return Response({'message' : 'cart Created successfully'},  status = status.HTTP_201_CREATED)
 
@@ -196,9 +204,17 @@ class CreateOrderAPIView(generics.CreateAPIView):
             total = cart.total,
             initial_total = cart.sub_total,
         )
+        itemList = []
         for item in cart_items:
-            order.cart_item = item
+            itemList.append(item)
+
+        order.cart_item.set(itemList)
         order.save()
         return Response({"message":"order created successfully","order id":order.oid})
         
+class CartOrderAPIView(generics.ListAPIView):
+    queryset = CartOrder.objects.all()
+    serializer_class = CartOrderSerializer
+    permission_classes = [AllowAny,]
+
 

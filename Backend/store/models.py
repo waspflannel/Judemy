@@ -108,7 +108,7 @@ class CartOrder(models.Model):
     tax = models.DecimalField(default=0.00,max_digits=12,decimal_places=2)
     total = models.DecimalField(default=0.00,max_digits=12,decimal_places=2)
     payment_status = models.CharField(choices=PAYMENT_STATUS , max_length= 100 , default="pending")
-    cart_item = models.ForeignKey(CartItem , on_delete=models.SET_NULL , null= True ,blank=True)
+    cart_item = models.ManyToManyField(CartItem ,blank=True)
 
     #coupons
     initial_total = models.DecimalField(default=0.00 , max_digits=12 , decimal_places=2)
