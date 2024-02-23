@@ -5,17 +5,29 @@ import { axiosInstance } from '../../utils/axios'
 import UserData from '../functions/UserData'
 import { Link } from 'react-router-dom'
 import NavBar from '../functions/NavBar'
-import { CartWrapper, CartWrapperLeft, CartWrapperRight } from './Cart.styles'
-import { BigHeader } from '../templates/custom-components.styles'
+import { CartWrapper, CartWrapperLeft, CartWrapperRight, CartWrapperTop, CartWrapperMiddle, CartWrapperBottom, CourseCardWrapper, CourseCardParent, CourseCardWrapperLeft, CourseCardWrapperRight, RemoveButtonWrapper } from './Cart.styles'
+import { BigHeader, MainButton } from '../templates/custom-components.styles'
 
-const CourseCard = ({ c }) => {
+const CourseCard = ({ c, onRemoveClick }) => {
+
     return(
-        <div>
-            <Link to = {`/detail/${c.course?.slug}`}> 
-                {c.course?.title}
-            </Link>
-            <h3>Price: {c.course?.price}</h3>
-        </div>
+        <CourseCardWrapper>
+            <RemoveButtonWrapper onClick={() => onRemoveClick(c)}>
+                X
+            </RemoveButtonWrapper>
+            <CourseCardWrapperLeft>
+                <Link to = {`/detail/${c.course?.slug}`}> 
+                    {c.course?.title}
+                </Link>
+                <p>{c.course?.description}</p>
+            </CourseCardWrapperLeft>
+            <CourseCardWrapperRight>
+                <p>Instructor: {c.course?.instructor}</p>
+                <p>Price: {c.course?.price}</p>
+                <p>Category: {c.course?.category?.title}</p>
+                <p>Rating: {c.course?.rating ? c.course?.rating : "No Ratings"}</p>
+            </CourseCardWrapperRight>
+        </CourseCardWrapper>
     )
 }
 
@@ -38,23 +50,44 @@ const Cart = () => {
         },[])
     }
 
+    const onRemoveClick = (c) => {
+        if(c?.cart?.id && c?.course?.pid){
+            const url = `/cart-delete/${c.cart.id}/${c.course.pid}/${c.cart.id}`
+            console.log(url)
+            axiosInstance.delete(url).then(fetchCartData(c.cart.id));
+        }
+    }
+
+
     return (
         <>
             <NavBar/>
             <CartWrapper>
                 <CartWrapperLeft>
-                    <BigHeader>Your Items</BigHeader>
-                    {
-                        cartItems?.map((c ,i) =>(
-                            <CourseCard c={c} key={i}/>
-                        ))
-                    }
+                    <CartWrapperTop><BigHeader>Your Items</BigHeader></CartWrapperTop>
+                    <CourseCardParent>
+                        {
+                            cartItems?.map((c ,i) =>(
+                                <CourseCard c={c} onRemoveClick={onRemoveClick} key={i}/>
+                            ))
+                        }
+                    </CourseCardParent>
                 </CartWrapperLeft>
                 <CartWrapperRight>
-                    <BigHeader>Summary</BigHeader>
-                    <h3>SubTotal: { cartItems[0]?.cart.sub_total } </h3>
-                    <h3>Tax: { cartItems[0]?.cart.tax }</h3>
-                    <h3>Total: { cartItems[0]?.cart?.total }</h3>
+                    <CartWrapperTop><BigHeader>Summary</BigHeader></CartWrapperTop>
+                    <CartWrapperMiddle>
+                        {
+                            cartItems?.map((c ,i) =>(
+                                <p key={i}>1 x {c.course.title}</p>
+                            ))
+                        }
+                    </CartWrapperMiddle>
+                    <CartWrapperBottom>
+                        <p>SubTotal: { cartItems[0]?.cart.sub_total } </p>
+                        <p>Tax: { cartItems[0]?.cart.tax }</p>
+                        <p>Total: { cartItems[0]?.cart?.total }</p>
+                        <MainButton>Checkout</MainButton>
+                    </CartWrapperBottom>
                 </CartWrapperRight>
             </CartWrapper>
         </>

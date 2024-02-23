@@ -8,7 +8,7 @@ const NavBar = () => {
     ])
     console.log(user())
   return (
-    <div>
+    <div style={{backgroundColor: 'black'}}>
     {isLoggedIn()
         ?
         <div style={{height: "10vh"}}>
