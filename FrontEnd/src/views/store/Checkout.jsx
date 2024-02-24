@@ -1,5 +1,5 @@
 import React from 'react'
-import { useState } from 'react'
+import { useEffect,useState } from 'react'
 import Swal from 'sweetalert2'
 import { axiosInstance } from '../../utils/axios'
 import UserData from '../functions/UserData'
@@ -8,6 +8,16 @@ import { BigHeader, InputField, InputLabel, MainButton, HyperLinkMain } from '..
 
 
 const Checkout = () => {
+
+  const [cartItems , setCartItems] = useState([])
+
+  const fetchCartData = (cartID) =>{
+      const url = cartID? `cart-items/${cartID}` : null
+      axiosInstance.get(url).then((response) =>{
+          setCartItems(response.data)
+      })
+  }
+
   const [name , setName] = useState("")
   const [email , setEmail] = useState("")
   const [phone , setPhone] = useState("")
@@ -16,6 +26,12 @@ const Checkout = () => {
   const [province , setProvince] = useState("")
   const [country , setCountry] = useState("")
   const userData = UserData()
+
+  if(userData !== undefined){
+    useEffect(()=>{
+        fetchCartData(userData?.user_id)
+    },[])
+}
   const createOrder = () =>{
     if(!name || !email || !phone || !address || !city || !province || !country){
       Swal.fire({
@@ -56,7 +72,9 @@ const Checkout = () => {
         <InputLabel>Country</InputLabel>
         <InputField type='text' name='' id=''  onChange={(e)=>setCountry(e.target.value)}></InputField>
     </form>
-    <button onClick={createOrder}>submit</button>
+    <p>Total: { cartItems[0]?.cart?.total ?? 0 }</p>
+    
+    <button onClick={createOrder}>proceed</button>
 </div>
   )
 }

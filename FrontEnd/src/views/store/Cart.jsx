@@ -87,7 +87,6 @@ const Cart = () => {
                         <p>Tax: { cartItems[0]?.cart.tax ?? 0 }</p>
                         <p>Total: { cartItems[0]?.cart?.total ?? 0 }</p>
                         <MainButton>Checkout</MainButton>
-
                         <Link to='/checkout/'>checkout</Link> 
                         
                     </CartWrapperBottom>
