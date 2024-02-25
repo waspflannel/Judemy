@@ -90,9 +90,11 @@ class Cart(models.Model):
 
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart , on_delete=models.CASCADE, related_name='cart_items')
+    vendor = models.ForeignKey(Vendor,on_delete=models.CASCADE , null=True)
     course = models.ForeignKey(Course , on_delete=models.CASCADE)
     qty = models.IntegerField(default=1)
     price = models.DecimalField(default=0.00 , max_digits=12 , decimal_places=2)
+    coupon = models.ManyToManyField("store.Coupon" , blank= True)
 
     def __str__(self) -> str:
         return self.course.title
@@ -104,6 +106,7 @@ class CartOrder(models.Model):
             ("processing" , "Processing"),
             ("cancelled" , "Cancelled"),
     )
+    vendor = models.ForeignKey(Vendor,on_delete=models.CASCADE , null=True)
     buyer = models.ForeignKey(User , on_delete=models.SET_NULL , null= True ,blank=True)
     tax = models.DecimalField(default=0.00,max_digits=12,decimal_places=2)
     total = models.DecimalField(default=0.00,max_digits=12,decimal_places=2)
@@ -124,27 +127,6 @@ class CartOrder(models.Model):
     country = models.CharField(max_length=100 , null=True , blank= True)
 
     #order id
-    oid = ShortUUIDField(unique= True , length = 10 , alphabet = "abcdefg12345")
-    date = models.DateTimeField(auto_now_add= True)
-
-    def __str__(self) -> str:
-        return self.oid
-
-class CartOrderItem(models.Model):
-    order = models.ForeignKey(CartOrder , on_delete= models.CASCADE)
-    vendor = models.ForeignKey(Vendor,on_delete=models.CASCADE)
-    course = models.ForeignKey(Course , on_delete=models.CASCADE)
-    qty = models.PositiveIntegerField(default=0)
-    price = models.DecimalField(default=0.00 , max_digits=12 , decimal_places=2)
-    sub_total = models.DecimalField(default=0.00 , max_digits=12 , decimal_places=2)
-    tax = models.DecimalField(default=0.00,max_digits=12,decimal_places=2)
-    total = models.DecimalField(default=0.00,max_digits=12,decimal_places=2)
-    country = models.CharField(max_length=100 , null= True , blank= True)
-
-    #coupons 
-    initial_total = models.DecimalField(default=0.00 , max_digits=12 , decimal_places=2)
-    saved = models.DecimalField(default=0.00 , max_digits=12 , decimal_places=2)
-
     oid = ShortUUIDField(unique= True , length = 10 , alphabet = "abcdefg12345")
     date = models.DateTimeField(auto_now_add= True)
 
@@ -209,7 +191,7 @@ class Notification(models.Model):
     user = models.ForeignKey(User , on_delete=models.CASCADE)
     vendor = models.ForeignKey(Vendor , on_delete=models.CASCADE)
     order = models.ForeignKey(CartOrder , on_delete=models.SET_NULL , null = True , blank =True)
-    order_item = models.ForeignKey(CartOrderItem , on_delete=models.SET_NULL , null = True , blank =True)
+    order_item = models.ForeignKey(CartItem , on_delete=models.SET_NULL , null = True , blank =True)
     seen = models.BooleanField(default= False)
     date = models.DateTimeField(auto_now_add= True)
 

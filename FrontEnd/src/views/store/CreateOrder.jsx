@@ -3,11 +3,12 @@ import { useEffect,useState } from 'react'
 import Swal from 'sweetalert2'
 import { axiosInstance } from '../../utils/axios'
 import UserData from '../functions/UserData'
+import { AuthPage } from '../templates/auth'
 import { BigHeader, InputField, InputLabel, MainButton, HyperLinkMain } from '../templates/custom-components.styles'
 
 
 
-const Checkout = () => {
+const CreateOrder = () => {
 
   const [cartItems , setCartItems] = useState([])
 
@@ -55,6 +56,7 @@ const Checkout = () => {
     })
   }
   return (
+    <AuthPage>
     <div>
     <form >
         <InputLabel>Full Name</InputLabel>
@@ -73,10 +75,11 @@ const Checkout = () => {
         <InputField type='text' name='' id=''  onChange={(e)=>setCountry(e.target.value)}></InputField>
     </form>
     <p>Total: { cartItems[0]?.cart?.total ?? 0 }</p>
-    
-    <button onClick={createOrder}>proceed</button>
+
+    <button onClick={createOrder}>proceed to checkout</button>
 </div>
+</AuthPage>
   )
 }
 
-export default Checkout
+export default CreateOrder

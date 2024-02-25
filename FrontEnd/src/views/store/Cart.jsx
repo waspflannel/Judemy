@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'
 import NavBar from '../functions/NavBar'
 import { CartWrapper, CartWrapperLeft, CartWrapperRight, CartWrapperTop, CartWrapperMiddle, CartWrapperBottom, CourseCardWrapper, CourseCardParent, CourseCardWrapperLeft, CourseCardWrapperRight, RemoveButtonWrapper } from './Cart.styles'
 import { BigHeader, MainButton } from '../templates/custom-components.styles'
-
+import { useNavigate } from 'react-router-dom'
 const CourseCard = ({ c, onRemoveClick }) => {
 
     return(
@@ -34,7 +34,7 @@ const CourseCard = ({ c, onRemoveClick }) => {
 const Cart = () => {
 
     const [cartItems , setCartItems] = useState([])
-
+    const navigate = useNavigate()
     const userData = UserData()
 
     const fetchCartData = (cartID) =>{
@@ -86,9 +86,7 @@ const Cart = () => {
                         <p>SubTotal: { cartItems[0]?.cart.sub_total ?? 0 } </p>
                         <p>Tax: { cartItems[0]?.cart.tax ?? 0 }</p>
                         <p>Total: { cartItems[0]?.cart?.total ?? 0 }</p>
-                        <MainButton>Checkout</MainButton>
-                        <Link to='/checkout/'>checkout</Link> 
-                        
+                        <MainButton onClick={()=>navigate("/create-order/")}>Confirm Order</MainButton>
                     </CartWrapperBottom>
                 </CartWrapperRight>
             </CartWrapper>

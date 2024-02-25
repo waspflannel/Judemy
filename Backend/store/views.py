@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from userauths.models import User
-from store.models import CartItem,Tax ,Category , Course , Gallery , Cart , CartOrder , CartOrderItem , CourseFaq , Wishlist  ,Review , Notification , Coupon
-from store.serializers import CartOrderSerializer,CartItemSerializer,CourseSerializer , CategorySerializer , CartSerializer  , CartOrderItemSerializer , CartOrderItemSerializer
+from store.models import CartItem,Tax ,Category , Course , Gallery , Cart , CartOrder  , CourseFaq , Wishlist  ,Review , Notification , Coupon
+from store.serializers import CouponSerializer, CartOrderSerializer,CartItemSerializer,CourseSerializer , CategorySerializer , CartSerializer  
 from rest_framework import generics , status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny , IsAuthenticated
@@ -73,6 +73,7 @@ class CartAPIView(generics.ListCreateAPIView):
                 course = course,
                 qty =1,
                 price = price,
+                vendor = course.vendor
             )
             cart_item.save()
             tax_rate = 13/100
@@ -103,7 +104,7 @@ class CartAPIView(generics.ListCreateAPIView):
                 course = course,
                 qty =1,
                 price = price,
-                
+                vendor = course.vendor
             )
             cart.sub_total = Decimal(cart.sub_total) + Decimal(cart_item.price)
             cart_item.save()
@@ -205,16 +206,64 @@ class CreateOrderAPIView(generics.CreateAPIView):
             initial_total = cart.sub_total,
         )
         itemList = []
+        vendorList = []
         for item in cart_items:
             itemList.append(item)
+            vendorList.append(item.course.vendor)
 
         order.cart_item.set(itemList)
         order.save()
         return Response({"message":"order created successfully","order id":order.oid})
         
-class CartOrderAPIView(generics.ListAPIView):
-    queryset = CartOrder.objects.all()
+class CartOrderAPIView(generics.RetrieveAPIView):
+    lookup_field = 'order_oid'
     serializer_class = CartOrderSerializer
-    permission_classes = [AllowAny,]
+    permission_classes = [AllowAny]
+    
+    def get_object(self):
+        order_oid = self.kwargs['order_oid']
+        order = CartOrder.objects.get(oid = order_oid)
+        return order
+
+class CouponAPIView(generics.CreateAPIView):
+    serializer_class = CouponSerializer
+    queryset = Coupon.objects.all()
+    permission_classes = [AllowAny]
+
+    def create(self , request):
+        payload = request.data
+        order_oid = payload['order_oid']
+        coupon_code = payload['coupon_code']
+        cart_id = payload['cart_id']
+
+        cart = Cart.objects.get(cart_id = cart_id)
+        
+        order = CartOrder.objects.get(oid = order_oid)
+        coupon = Coupon.objects.get(code = coupon_code)
+
+        if(coupon):
+            order_items = CartItem.objects.filter(cart = cart , vendor = coupon.vendor)
+            if(order_items):
+                for item in order_items:
+                    if not coupon in item.coupon.all():
+                        discount = item.course.price * coupon.discount /100
+                        item.price -= discount
+                        item.coupon.add(coupon)
+                        order.total -= discount
+                        item.save()
+                        order.save()
+
+                        return Response({"message": "coupon activated"} , status = status.HTTP_200_OK)
+                    else:
+                        return Response({"message": "coupon already activated"} , status = status.HTTP_200_OK)
+            else:
+                return Response({"message": "item does not exist"} , status = status.HTTP_200_OK)
+        else:
+            return Response({"message": "coupon does not exist"} , status = status.HTTP_200_OK)
+                        
+
+
+
+
 
 
