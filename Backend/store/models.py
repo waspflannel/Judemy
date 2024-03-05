@@ -113,6 +113,7 @@ class CartOrder(models.Model):
     payment_status = models.CharField(choices=PAYMENT_STATUS , max_length= 100 , default="pending")
     cart_item = models.ManyToManyField(CartItem ,blank=True)
 
+    stripe_session_id = models.CharField(max_length=1000,null=True,blank=True)
     #coupons
     initial_total = models.DecimalField(default=0.00 , max_digits=12 , decimal_places=2)
     saved = models.DecimalField(default=0.00 , max_digits=12 , decimal_places=2)

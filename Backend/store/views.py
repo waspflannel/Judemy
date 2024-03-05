@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render , redirect
 from userauths.models import User
 from store.models import CartItem,Tax ,Category , Course , Gallery , Cart , CartOrder  , CourseFaq , Wishlist  ,Review , Notification , Coupon
 from store.serializers import CouponSerializer, CartOrderSerializer,CartItemSerializer,CourseSerializer , CategorySerializer , CartSerializer  
@@ -6,6 +6,8 @@ from rest_framework import generics , status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny , IsAuthenticated
 from decimal import Decimal
+import stripe
+stripe.api_key = "sk_test_51OqlmVK5v9Zo4ovxK0UzJRqWPLZj2Qiqeyi932KJwdNjLHU2VH891BQXSLVdHqVhQ3tPsQrwIvrvkaJqHoz5zwz10040jri6AT"
 # Create your views here.
 
 class CategoryListAPIView(generics.ListAPIView):
@@ -239,30 +241,68 @@ class CouponAPIView(generics.CreateAPIView):
         cart = Cart.objects.get(cart_id = cart_id)
         
         order = CartOrder.objects.get(oid = order_oid)
-        coupon = Coupon.objects.get(code = coupon_code)
-
+        coupon = Coupon.objects.filter(code = coupon_code).first()
+        couponList = []
         if(coupon):
             order_items = CartItem.objects.filter(cart = cart , vendor = coupon.vendor)
             if(order_items):
                 for item in order_items:
+                    print(item)
                     if not coupon in item.coupon.all():
                         discount = item.course.price * coupon.discount /100
-                        item.price -= discount
-                        item.coupon.add(coupon)
+                        #item.price -= discount
+                        couponList.append(coupon)
+                        item.coupon.set(couponList)
                         order.total -= discount
                         item.save()
                         order.save()
-
-                        return Response({"message": "coupon activated"} , status = status.HTTP_200_OK)
                     else:
-                        return Response({"message": "coupon already activated"} , status = status.HTTP_200_OK)
-            else:
-                return Response({"message": "item does not exist"} , status = status.HTTP_200_OK)
+                        return Response({"message": "coupon already activated","icon":"warning"} , status = status.HTTP_200_OK)
+                return Response({"message": "coupon activated","icon":"success"} , status = status.HTTP_200_OK)
         else:
-            return Response({"message": "coupon does not exist"} , status = status.HTTP_200_OK)
+            return Response({"message": "coupon does not exist","icon":"error"} , status = status.HTTP_200_OK)
                         
 
+class StripeCheckoutView(generics.CreateAPIView):
+    serializer_class  = CartOrderSerializer
+    permission_classes = [AllowAny,]
+    queryset = CartOrder.objects.all()
 
+    def create(self):
+        order_oid = self.kwargs['order_oid']
+        order = CartOrder.objects.get(oid = order_oid)
+
+        if not order:
+            return Response({"message": "order not found"} , status = status.HTTP_404_NOT_FOUND)
+
+        try:
+            
+            checkout_session = stripe.checkout.Session.create(
+                customer_email = order.email,
+                payment_method = ['card'],
+                line_items = [
+                    {
+                        'price_data':{
+                            'currency':'cad',
+                            'product_data':{'name':order.full_name},
+                            'unit_amount':int(order.total * 100)
+                            },
+                        'quantity':1,
+                    }
+                ],
+                mode = 'payment',
+                success_url ='http://localhost:5173/payment-success/' + order.oid + '?session_id={CHECKOUT_SESSION_ID}',
+                cancel_url = 'http://localhost:5173/payment-failed/?session_id={CHECKOUT_SESSION_ID}'
+            )
+
+            order.stripe_session_id = checkout_session.id
+            order.save()
+
+            return redirect(checkout_session.url)
+        except stripe.error.StripeError as e:
+            return Response({"error" : f"something went wrong with stripe{str(e)}"})
+
+        
 
 
 

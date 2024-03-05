@@ -15,7 +15,7 @@ import Cookie from 'js-cookie'
 import { jwtDecode } from 'jwt-decode'
 import { useAuthStore } from './store/auth'
 import Cart from './views/store/Cart'
-import Checkout from './views/store/CreateOrder'
+import Checkout from './views/store/Checkout'
 import CreateOrder from './views/store/CreateOrder'
 function App() {
   useEffect(()=>{
@@ -43,6 +43,7 @@ function App() {
         <Route path ='/detail/:slug/' element={<CourseDetail/>}></Route>
         <Route path='/cart/' element = {<Cart/>}></Route>
         <Route path='/create-order/' element = {<CreateOrder/>}></Route>
+        <Route path='/checkout/:order_oid' element = {<Checkout/>}></Route>
       </Routes>
     </BrowserRouter>
   )

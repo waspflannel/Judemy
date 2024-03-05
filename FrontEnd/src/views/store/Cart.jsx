@@ -82,6 +82,7 @@ const Cart = () => {
                             ))
                         }
                     </CartWrapperMiddle>
+
                     <CartWrapperBottom>
                         <p>SubTotal: { cartItems[0]?.cart.sub_total ?? 0 } </p>
                         <p>Tax: { cartItems[0]?.cart.tax ?? 0 }</p>

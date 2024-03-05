@@ -2,6 +2,7 @@ import React from 'react'
 import { useEffect,useState } from 'react'
 import Swal from 'sweetalert2'
 import { axiosInstance } from '../../utils/axios'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
 import UserData from '../functions/UserData'
 import { AuthPage } from '../templates/auth'
 import { BigHeader, InputField, InputLabel, MainButton, HyperLinkMain } from '../templates/custom-components.styles'
@@ -11,7 +12,7 @@ import { BigHeader, InputField, InputLabel, MainButton, HyperLinkMain } from '..
 const CreateOrder = () => {
 
   const [cartItems , setCartItems] = useState([])
-
+  const navigate = useNavigate()
   const fetchCartData = (cartID) =>{
       const url = cartID? `cart-items/${cartID}` : null
       axiosInstance.get(url).then((response) =>{
@@ -33,13 +34,15 @@ const CreateOrder = () => {
         fetchCartData(userData?.user_id)
     },[])
 }
-  const createOrder = () =>{
+  const createOrder =  async () =>{
+    
     if(!name || !email || !phone || !address || !city || !province || !country){
       Swal.fire({
         icon:'warning',
         title: "missing fields",
         text: "please fill all fields"
       })
+      return;
     }
     const formData = new FormData()
     formData.append("full_name" , name)
@@ -51,8 +54,11 @@ const CreateOrder = () => {
     formData.append("cart_id" , userData?.user_id)
     formData.append("user_id" , userData?.user_id)
     
-    const response = axiosInstance.post('/cart-order' , formData).then((response) =>{
+    const response = await axiosInstance.post('/cart-order' , formData).then((response) =>{
+        const orderId = response.data['order id'];
         console.log(response.data)
+        navigate(`/checkout/${orderId}`)
+      
     })
   }
   return (
@@ -77,6 +83,9 @@ const CreateOrder = () => {
     <p>Total: { cartItems[0]?.cart?.total ?? 0 }</p>
 
     <button onClick={createOrder}>proceed to checkout</button>
+
+    
+    <Link to={'/checkout'}>Checkout</Link>
 </div>
 </AuthPage>
   )
