@@ -5,10 +5,12 @@ import UserData from '../functions/UserData'
 import { useParams,useNavigate } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import Swal from 'sweetalert2'
+import { SERVER_URL } from '../../utils/constants'
 const Checkout = () => {
     const [couponCode , setCouponCode] = useState("");
     const [order , setOrder] = useState("")
 
+    const [paymentLoading,setPaymentLoading] = useState(false)
 
 
     const param = useParams()
@@ -34,6 +36,11 @@ const Checkout = () => {
             console.log(error)
         }
 
+    }
+
+    const stripe = (event) =>{
+        setPaymentLoading(true)
+        event.target.form.submit();
     }
 
     const userData = UserData()
@@ -67,6 +74,16 @@ const Checkout = () => {
         <div>
       <input  onChange={(e)=>setCouponCode(e.target.value)} type="text" placeholder="coupon code"></input>
       <button type="button" onClick={applyCoupon}>Submit</button>
+         </div>
+         <div>
+         {paymentLoading? 
+            <form action={`${SERVER_URL}api/stripe-checkout/${order?.oid}`}>
+            <button disabled onClick={stripe} type='submit'>processing</button>
+            </form>
+            :
+            <form action={`${SERVER_URL}api/stripe-checkout/${order?.oid}`} method='POST'>
+            <button onClick={stripe} type='submit'>pay with stripe</button>
+            </form>}
          </div>
     </div>
   )

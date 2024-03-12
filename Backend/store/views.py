@@ -6,8 +6,10 @@ from rest_framework import generics , status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny , IsAuthenticated
 from decimal import Decimal
+from django.conf import settings
 import stripe
-stripe.api_key = "sk_test_51OqlmVK5v9Zo4ovxK0UzJRqWPLZj2Qiqeyi932KJwdNjLHU2VH891BQXSLVdHqVhQ3tPsQrwIvrvkaJqHoz5zwz10040jri6AT"
+
+stripe.api_key = settings.STRIPE_PRIVATE_KEY
 # Create your views here.
 
 class CategoryListAPIView(generics.ListAPIView):
@@ -268,7 +270,7 @@ class StripeCheckoutView(generics.CreateAPIView):
     permission_classes = [AllowAny,]
     queryset = CartOrder.objects.all()
 
-    def create(self):
+    def create(self , *args,**kwargs):
         order_oid = self.kwargs['order_oid']
         order = CartOrder.objects.get(oid = order_oid)
 
@@ -279,7 +281,7 @@ class StripeCheckoutView(generics.CreateAPIView):
             
             checkout_session = stripe.checkout.Session.create(
                 customer_email = order.email,
-                payment_method = ['card'],
+                payment_method_types = ['card'],
                 line_items = [
                     {
                         'price_data':{
