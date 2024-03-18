@@ -305,7 +305,48 @@ class StripeCheckoutView(generics.CreateAPIView):
             return Response({"error" : f"something went wrong with stripe{str(e)}"})
 
         
+class PaymentSuccessView(generics.CreateAPIView):
+    serializer_class  = CartOrderSerializer
+    permission_classes = [AllowAny,]
+    queryset = CartOrder.objects.all()
+    print("HI IM  ALSO RUNNING ")
 
+
+    def create(self,request,*args,**kwargs):
+        print("HI IM RUNNING ")
+        payload = request.data
+        order_oid = payload['order_oid']
+        session_id = payload['session_id']
+        cart_id = payload['cart_id']
+
+        print(order_oid)
+        order = CartOrder.objects.get(oid = order_oid)
+        cart = Cart.objects.get(cart_id = cart_id)
+        order_items = CartItem.objects.filter(cart = cart)
+        
+        if session_id != 'null':
+            session = stripe.checkout.Session.retrieve(session_id)
+            if session.payment_status == "paid":
+                if order.payment_status == "pending":
+                    print("pending")
+                    order.payment_status = "paid"
+                    print("paid")
+                    order.save()
+                    print("saved")
+                    return Response({"message" : "payment successful"})
+                else:
+                    return Response({"message" : "already paid"})
+            elif session.payment_status == "unpaid":
+                print("unpaid")
+                return Response({"message" : "unpaid"})
+            elif session.payment_status == "cancelled":
+                print("cancelled")
+                return Response({"message" : "payment cancelled"})
+            else:
+                print("error")
+                return Response({"message" : "error occured"})
+        else:
+            session = None
 
 
 

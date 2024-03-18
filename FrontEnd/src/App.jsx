@@ -17,6 +17,7 @@ import { useAuthStore } from './store/auth'
 import Cart from './views/store/Cart'
 import Checkout from './views/store/Checkout'
 import CreateOrder from './views/store/CreateOrder'
+import PaymentSuccess from './views/store/PaymentSuccess'
 function App() {
   useEffect(()=>{
     let access_token = Cookie.get("access_token")
@@ -44,6 +45,7 @@ function App() {
         <Route path='/cart/' element = {<Cart/>}></Route>
         <Route path='/create-order/' element = {<CreateOrder/>}></Route>
         <Route path='/checkout/:order_oid' element = {<Checkout/>}></Route>
+        <Route path='/payment-success/:order_oid/' element={<PaymentSuccess/>}></Route>
       </Routes>
     </BrowserRouter>
   )
