@@ -27,18 +27,7 @@ const Course = () => {
         <NavBar/>
         <div> 
         <h1 style={{'textDecoration': 'underline'}}>Products</h1>
-        {course?.map((c ,index) =>(
-            <ul>
-            <div key={index}>
-            <Link to = {`/detail/${c.slug}`}>
-            <h3>{c.title}</h3>
-            </Link>
-            <p>{c.description}</p>
-            <p>${c.price}</p>
-            <br></br>
-            </div>
-            </ul>
-        ))}
+
         </div>
         <br></br>
         <div>

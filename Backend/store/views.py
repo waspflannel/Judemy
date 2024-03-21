@@ -1,7 +1,7 @@
 from django.shortcuts import render , redirect
 from userauths.models import User
 from store.models import CartItem,Tax ,Category , Course , Gallery , Cart , CartOrder  , CourseFaq , Wishlist  ,Review , Notification , Coupon
-from store.serializers import CouponSerializer, CartOrderSerializer,CartItemSerializer,CourseSerializer , CategorySerializer , CartSerializer  
+from store.serializers import CouponSerializer, CartOrderSerializer,CartItemSerializer,CourseSerializer , CategorySerializer , CartSerializer ,ReviewSerializer 
 from rest_framework import generics , status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny , IsAuthenticated
@@ -348,5 +348,35 @@ class PaymentSuccessView(generics.CreateAPIView):
         else:
             session = None
 
+
+class ReviewListAPIView(generics.ListCreateAPIView):
+    serializer_class = ReviewSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        course_id = self.kwargs['course_pid']
+        print(course_id)
+        course = Course.objects.get(pid = course_id)
+        return Review.objects.filter(course = course)
+
+    
+    def create(self , request , *args , **kwargs):
+        payload = request.data
+        course_id = self.kwargs['course_pid']
+        user_id = payload['user_id']
+        rating = payload['rating']
+        review = payload['review']
+
+        
+        user = User.objects.get(id = user_id)
+        course = Course.objects.get(pid = course_id)
+
+        Review.objects.create(
+            user = user,
+            course = course,
+            rating = rating,
+            review = review
+        )
+        return Response({"message":"review created successfully"}, status=status.HTTP_200_CREATED)
 
 

@@ -6,7 +6,6 @@ const NavBar = () => {
         state.isLoggedIn,
         state.user,
     ])
-    console.log(user())
   return (
     <div style={{backgroundColor: 'black'}}>
     {isLoggedIn()

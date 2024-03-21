@@ -22,10 +22,11 @@ urlpatterns = [
     path('cart-order' , storeViews.CreateOrderAPIView.as_view()),
     path('orders/<str:order_oid>/' , storeViews.CartOrderAPIView.as_view()),
     path('coupon/' , storeViews.CouponAPIView.as_view()),
-
+    path('reviews/<course_pid>' , storeViews.ReviewListAPIView.as_view()),
 
     #payment endpoints
     path('stripe-checkout/<order_oid>' , storeViews.StripeCheckoutView.as_view()),
     path('payment-success/<str:order_oid>', storeViews.PaymentSuccessView.as_view()),
 
+   
 ]
