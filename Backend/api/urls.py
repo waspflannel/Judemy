@@ -22,6 +22,7 @@ urlpatterns = [
     path('cart-order' , storeViews.CreateOrderAPIView.as_view()),
     path('orders/<str:order_oid>/' , storeViews.CartOrderAPIView.as_view()),
     path('coupon/' , storeViews.CouponAPIView.as_view()),
+    path('search/' , storeViews.SearchCourseAPIView.as_view()),
     path('reviews/<course_pid>' , storeViews.ReviewListAPIView.as_view()),
 
     #payment endpoints

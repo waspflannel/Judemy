@@ -1,12 +1,17 @@
-import React from 'react'
+import React , {useEffect, useState} from 'react'
 import { useAuthStore } from '../../store/auth'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate} from 'react-router-dom'
 const NavBar = () => {
+
+  
     const[isLoggedIn , user] = useAuthStore((state) =>[
         state.isLoggedIn,
         state.user,
     ])
+
+
   return (
+    <>
     <div style={{backgroundColor: 'black'}}>
     {isLoggedIn()
         ?
@@ -19,8 +24,13 @@ const NavBar = () => {
             <Link to='/register'>Register</Link> 
             <Link to='/login'>Login</Link>
         </div>
+
+        
+
     }
     </div>
+    
+    </>
   )
 
 }

@@ -372,7 +372,7 @@ class ReviewListAPIView(generics.ListCreateAPIView):
         course = Course.objects.get(pid = course_id)
         alreadyCreatedReviews = Review.objects.filter(user = user , course = course)
         if alreadyCreatedReviews:
-            return Response({"message":"you have already reviewed this course"})
+            return Response({"message":"you have already reviewed this course "}, status=status.HTTP_200_OK)
         Review.objects.create(
             user = user,
             course = course,
@@ -381,4 +381,11 @@ class ReviewListAPIView(generics.ListCreateAPIView):
         )
         return Response({"message":"review created successfully"}, status=status.HTTP_201_CREATED)
 
+class SearchCourseAPIView(generics.ListCreateAPIView):
+    serializer_class = CourseSerializer
+    permission_classes = [AllowAny]
 
+    def get_queryset(self , *args , **kwargs):
+        query = self.request.GET.get('query')
+        course = Course.objects.filter(title__icontains = query)
+        return course

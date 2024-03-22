@@ -1,6 +1,6 @@
 import React, { useState , useEffect } from 'react'
 import { axiosInstance } from '../../utils/axios'
-import { Link } from 'react-router-dom'
+import { Link , useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../../store/auth'
 import NavBar from '../functions/NavBar'
 
@@ -8,6 +8,21 @@ const Course = () => {
 
     const [course , setCourse] = useState([])
     const [category , setCategory] = useState([])
+
+    const navigate = useNavigate()
+    const [search , setSearch] = useState('')
+    const handleSearch = (e) =>{ 
+
+      setSearch(e.target.value)
+    }
+
+    useEffect(() => {
+      axiosInstance.get(`/search?query=${search}`)
+      .then((response) => {
+          setCourse(response.data);
+      })
+    }, [search])
+
     useEffect(() => {
         axiosInstance.get('course/')
             .then((response) => {
@@ -51,6 +66,10 @@ const Course = () => {
             </ul>
         ))}
         
+        </div>
+
+        <div>
+        <input type="search" placeholder='search' value={search}onChange={handleSearch}></input>
         </div>
         </>
     )

@@ -57,16 +57,14 @@ const CourseDetail = () => {
         axiosInstance.post(`reviews/${course?.pid}`,formData).then((response) =>{
             fetchReviewData()
             Swal.fire({
-                icon:'success',
+                icon:response.status==200?'error' : 'success',
                 title:response.data.message
             })
+            console.log(response.status)
         })
         }
         catch(error){
-        Swal.fire({
-            icon:'error',
-            title:response.data.message
-        })
+            console.log(error)
         }
     }
     const handleCart = async () =>{
@@ -132,7 +130,7 @@ const CourseDetail = () => {
                 
                 <div style={{border:"solid 2px black"}}>
                 <p>{review?.user?.username}</p>
-                <p>{review.date}</p>
+                <p>{new Date(review.date).toDateString()}</p>
                 <p>{review.review}</p>
                 <p>
                     {
