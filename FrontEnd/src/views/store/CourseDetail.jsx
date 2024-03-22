@@ -11,11 +11,14 @@ import NavBar from '../functions/NavBar'
 const CourseDetail = () => {
     const [course , setCourse] = useState(null)
     const [country , setCountry] = useState('')
+    const [createReview , setCreateReview] = useState({
+        user_id: 0, course_id: course?.id, review: '', rating:0 })
 
     const[reviews , setReviews] = useState([{}])
     const userData = UserData()
     const param = useParams()
     const cartID = CartID()
+
 
     const toast = Swal.mixin({
         toast:true,
@@ -36,6 +39,36 @@ const CourseDetail = () => {
 
     var currentCountry = getCountry()
 
+    const handleMakeReview = async (e) =>{
+        setCreateReview({...createReview, [e.target.name]: e.target.value})
+        console.log(createReview)
+
+    }
+    const handleReviewSubmit = (e) =>{
+
+        try{
+        e.preventDefault()
+        const formData = new FormData()
+        formData.append("user_id" , userData?.user_id)
+        formData.append("course_id" , course.pid)
+        formData.append("review" , createReview.review)
+        formData.append("rating" , createReview.rating)
+
+        axiosInstance.post(`reviews/${course?.pid}`,formData).then((response) =>{
+            fetchReviewData()
+            Swal.fire({
+                icon:'success',
+                title:response.data.message
+            })
+        })
+        }
+        catch(error){
+        Swal.fire({
+            icon:'error',
+            title:response.data.message
+        })
+        }
+    }
     const handleCart = async () =>{
         try {
     
@@ -45,9 +78,7 @@ const CourseDetail = () => {
             formData.append("price" ,course.price)
             formData.append("country" , currentCountry)
             formData.append("cart_id" , userData?.user_id)
-    
             const response = await axiosInstance.post(`cart-view` , formData)
-
             console.log(response)
             Swal.fire({
                 icon:'success',
@@ -101,6 +132,7 @@ const CourseDetail = () => {
                 
                 <div style={{border:"solid 2px black"}}>
                 <p>{review?.user?.username}</p>
+                <p>{review.date}</p>
                 <p>{review.review}</p>
                 <p>
                     {
@@ -113,7 +145,29 @@ const CourseDetail = () => {
                 <br></br>
                 </div>
             ))}
+            </div>
+            <div>
+            <h2>make a review</h2>
+            <form>
+            <div>
+            <label htmlFor="rating">Rating</label>
+            <select name="rating" onChange={handleMakeReview}>
+            <option value="1">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            </select>
 
+            <label htmlFor="reviewText">Review</label>
+            <textarea name="review" id="reviewText" row={4} placeholder="write a review" value={createReview.text}
+            onChange={handleMakeReview}></textarea>
+            </div>
+
+            <button type="button" onClick = {handleReviewSubmit}>Submit</button>
+            </form>
+            
             </div>
 
         </>

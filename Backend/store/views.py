@@ -370,13 +370,15 @@ class ReviewListAPIView(generics.ListCreateAPIView):
         
         user = User.objects.get(id = user_id)
         course = Course.objects.get(pid = course_id)
-
+        alreadyCreatedReviews = Review.objects.filter(user = user , course = course)
+        if alreadyCreatedReviews:
+            return Response({"message":"you have already reviewed this course"})
         Review.objects.create(
             user = user,
             course = course,
             rating = rating,
             review = review
         )
-        return Response({"message":"review created successfully"}, status=status.HTTP_200_CREATED)
+        return Response({"message":"review created successfully"}, status=status.HTTP_201_CREATED)
 
 
