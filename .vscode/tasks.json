@@ -1,0 +1,46 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Run Frontend",
+            "type": "shell",
+            "windows": {
+                "command": "cmd /c \"call frontend.bat\""
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Run Backend",
+            "type": "shell",
+            "windows": {
+                "command": "cmd /c call backend.bat"
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Run Both",
+            "dependsOn": [
+                "Run Frontend",
+                "Run Backend"
+            ],
+            "problemMatcher": []
+        }
+    ]
+    
+}

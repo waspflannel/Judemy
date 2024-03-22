@@ -24,13 +24,6 @@ const Course = () => {
     }, [search])
 
     useEffect(() => {
-        axiosInstance.get('course/')
-            .then((response) => {
-                setCourse(response.data);
-            })
-    }, []);
-
-    useEffect(() => {
         axiosInstance.get('category/')
             .then((response) => {
                 setCategory(response.data);
