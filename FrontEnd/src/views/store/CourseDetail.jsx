@@ -7,12 +7,31 @@ import { CountryPicker } from '../functions/CountryPicker'
 import CartID from '../functions/CartID'
 import Swal from 'sweetalert2'
 import NavBar from '../functions/NavBar'
+import styled from 'styled-components'
+import { MainButton, CustomTextArea } from '../templates/custom-components.styles'
+
+const CoursePageWrapper = styled.div`
+    padding: 2vh 15vw;
+`
+
+const ReviewsWrapper = styled.div`
+    background-color: black;
+    color: white;
+    padding: 2vh 15vw;
+`
+
+const CourseInformationWrapper = styled.div`
+    display: flex;
+    gap: 30px;
+    align-items: center;
+`
 
 const CourseDetail = () => {
     const [course , setCourse] = useState(null)
     const [country , setCountry] = useState('')
-    const [createReview , setCreateReview] = useState({
-        user_id: 0, course_id: course?.id, review: '', rating:0 })
+    const [createReview , setCreateReview] = useState({ user_id: 0, course_id: course?.id, review: '', rating:0 })
+    const [currentStars, setCurrentStars] = useState(0);
+    const [tempStars, setTempStars] = useState(0);
 
     const[reviews , setReviews] = useState([{}])
     const userData = UserData()
@@ -41,32 +60,31 @@ const CourseDetail = () => {
 
     const handleMakeReview = async (e) =>{
         setCreateReview({...createReview, [e.target.name]: e.target.value})
-        console.log(createReview)
-
     }
+
     const handleReviewSubmit = (e) =>{
-
         try{
-        e.preventDefault()
-        const formData = new FormData()
-        formData.append("user_id" , userData?.user_id)
-        formData.append("course_id" , course.pid)
-        formData.append("review" , createReview.review)
-        formData.append("rating" , createReview.rating)
+            e.preventDefault()
+            const formData = new FormData()
+            formData.append("user_id" , userData?.user_id)
+            formData.append("course_id" , course.pid)
+            formData.append("review" , createReview.review)
+            formData.append("rating" , currentStars)
 
-        axiosInstance.post(`reviews/${course?.pid}`,formData).then((response) =>{
-            fetchReviewData()
-            Swal.fire({
-                icon:response.status==200?'error' : 'success',
-                title:response.data.message
+            axiosInstance.post(`reviews/${course?.pid}`,formData).then((response) =>{
+                fetchReviewData()
+                Swal.fire({
+                    icon:response.status==200?'error' : 'success',
+                    title:response.data.message
+                })
+                console.log(response.status)
             })
-            console.log(response.status)
-        })
         }
         catch(error){
             console.log(error)
         }
     }
+
     const handleCart = async () =>{
         try {
     
@@ -112,61 +130,69 @@ const CourseDetail = () => {
     return (
         <>
         <NavBar/>
-        <div>
-        <h1>Course Details</h1>
-        <h3>Title: {course.title}</h3>
-        <h3>Instructor: {course.instructor}</h3>
-        <h3>Description: {course.description}</h3>
-        <h3>Price: {course.on_sale? course.sale_price : course.price}</h3>
-        <h3>{course.featured? <p>featured</p> : <p>not featured</p>}</h3>
-        <h3>Views: {course.views}</h3>
-        <h3>Rating: {course.rating? course.rating : 0}</h3>
-        </div>
+        
+        <CoursePageWrapper>
+            <h1>{course.title}</h1>
+            <CourseInformationWrapper>
+                <h3>Instructor: {course.instructor}</h3>
+                <h3>Price: {course.price}</h3>
+                <h3>Category: {course.category?.title}</h3>
+                <h3>Rating: {
+                    course.rating ? 
+                    Array(course.rating).fill().map((_, r) => (
+                        <span key={r}>⭐</span>
+                    )) 
+                    : 
+                    "No Ratings"}
+                </h3>
+            </CourseInformationWrapper>
+                    
+            <p>{course.description}</p>
+                    
             <CountryPicker setCountry={setCountry} />
             <button type='button' onClick={handleCart}>add TO cart</button>
+        </CoursePageWrapper>
 
-            <div>
-            {reviews.map(review => (
-                
-                <div style={{border:"solid 2px black"}}>
-                <p>{review?.user?.username}</p>
-                <p>{new Date(review.date).toDateString()}</p>
-                <p>{review.review}</p>
-                <p>
-                    {
-                        //print stars based on the rating
-                        Array(review.rating).fill().map((_) => (
-                            <span>⭐</span>
-                        ))
-                    }
-                </p>
-                <br></br>
+            <ReviewsWrapper>
+                <div>
+                    <h1>Reviews</h1>
+                    <h3>Submit your own review</h3>
+                    <form>
+                        <div>
+                        <div>
+                            {
+                                [1, 2, 3, 4, 5].map((_, r) => (
+                                    <span style={{fontSize: '30px', cursor: 'pointer'}} key={r} onMouseEnter={() => setTempStars(r + 1)} onMouseLeave={() => setTempStars(currentStars)} onClick={() => setCurrentStars(tempStars)}>{_ <= tempStars ? '★' : '☆'}</span>
+                                ))
+                            }
+                        </div>
+
+                        <CustomTextArea name="review" id="reviewText" row={4} placeholder="Write a review" value={createReview.text} onChange={handleMakeReview}></CustomTextArea>
+                        </div>
+
+                        <MainButton type="button" onClick = {handleReviewSubmit}>Submit review</MainButton>
+                    </form>
                 </div>
-            ))}
-            </div>
-            <div>
-            <h2>make a review</h2>
-            <form>
-            <div>
-            <label htmlFor="rating">Rating</label>
-            <select name="rating" onChange={handleMakeReview}>
-            <option value="1">0</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            </select>
 
-            <label htmlFor="reviewText">Review</label>
-            <textarea name="review" id="reviewText" row={4} placeholder="write a review" value={createReview.text}
-            onChange={handleMakeReview}></textarea>
-            </div>
-
-            <button type="button" onClick = {handleReviewSubmit}>Submit</button>
-            </form>
-            
-            </div>
+                <div>
+                    {reviews.map(review => (
+                        <div style={{border:"solid 2px black"}} key={review}>
+                            <p>{review?.user?.username}</p>
+                            <p>{new Date(review.date).toDateString()}</p>
+                            <p>{review.review}</p>
+                            <p>
+                                {
+                                    //print stars based on the rating
+                                    Array(review.rating).fill().map((_, r) => (
+                                        <span key={r}>⭐</span>
+                                    ))
+                                }
+                            </p>
+                            <br></br>
+                        </div>
+                    ))}
+                </div>
+            </ReviewsWrapper>
 
         </>
     )

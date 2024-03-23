@@ -27,3 +27,17 @@ export const MainButton = styled.button`
 export const HyperLinkMain = styled(Link)`
     color: white;
 `
+
+export const HyperLinkButton = styled(Link)`
+    color: black;
+    text-decoration: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    background-color: white;
+`
+
+export const CustomTextArea = styled.textarea`
+    width: 300px;
+    height: 100px;
+    margin: 20px 0;
+`
